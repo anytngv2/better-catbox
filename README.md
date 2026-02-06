@@ -22,7 +22,9 @@ A userscript that adds instant download buttons to images on Zerochan.net, allow
 
 ## Features
 
-- Design Reworked for a better visual
+- Design reworked for better visuals
+- Hide sensitive information such as username, hash (account identifier), and email address
+- If the user is logged in, add a dedicated navigation menu
 
 ## Installation
 
@@ -61,6 +63,13 @@ A userscript that adds instant download buttons to images on Zerochan.net, allow
 <img alt="" src="preview/faq_before.png" width="49%">
 <img alt="" src="preview/faq_after.png" width="49%">
 </div>
+
+### Manage account
+<div align="center">
+<img alt="" src="preview/manage_acc_before.png" width="49%">
+<img alt="" src="preview/manage_acc_after.png" width="49%">
+</div>
+
 
 
 ## Note

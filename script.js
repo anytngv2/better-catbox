@@ -2,7 +2,7 @@
 // @name 			Better Catbox
 // @namespace 		https://github.com/anytngv2/better-catbox
 // @supportURL 		https://github.com/anytngv2/better-catbox
-// @version 		1.1.1-beta
+// @version 		1.2.1-beta
 // @description 	Improves the overall experience of the catbox site by adding some features and cleaning up the UI
 // @author 			AnytngV2
 // @match 			https://*.catbox.moe/*
@@ -14,8 +14,8 @@
 // @compatible 		safari
 // @grant 			none
 // @run-at 			document-end
-// @updateURL 		
-// @downloadURL 	
+// @updateURL
+// @downloadURL
 // ==/UserScript==
 (function () {
     'use strict';
@@ -65,6 +65,71 @@
     });
 
     // ? ============================
+    // ? Security script
+    // ? ===========================
+
+    // hide your hash value
+    document.querySelectorAll("p").forEach(p => {
+        p.innerHTML = p.innerHTML.replace(
+            /(Your userhash is:<\/b>\s*)([a-z0-9]+)/i,
+            '$1<br><span style="background:#000;color:#000;width:100%;">$2</span>'
+        );
+    });
+
+    // remove email value in input#email
+    const emailInput = document.querySelector('input[name="email"]');
+    if (emailInput) emailInput.value = '';
+
+    // ? ============================
+    // ? New navigation
+    // ? ============================
+    // check if user connected for new nav
+    if (location.pathname === "/") {
+        const aUser = document.querySelector('a[href="user/"]');
+        if (aUser) {
+            const prev = aUser.previousSibling;
+            const next = aUser.nextSibling;
+
+            if (prev && prev.nodeType === 3 && prev.textContent.trim() === "|") {
+                prev.remove();
+            } else if (next && next.nodeType === 3 && next.textContent.trim() === "|") {
+                next.remove();
+            }
+
+            aUser.remove();
+
+            // user nav
+
+            const userNav = document.createElement('div');
+            userNav.innerHTML = `
+                <div class="linkrow" style="margin-top:10px;">
+                    <a href="user/" class="linkbutton">
+                        My account
+                    </a>
+                    |
+                    <a href="user/view.php" class="linkbutton">
+                        Uploads
+                    </a> 
+                    |
+                    <a href="user/manage_albums.php" class="linkbutton">
+                        Albums
+                    </a>
+                    |
+                    <a href="user/manage.php" class="linkbutton">
+                        Settings
+                    </a>
+                </div>
+            `;
+
+            document.querySelector('div.linkrow').after(userNav);
+        }
+    }
+
+
+
+
+
+    // ? ============================
     // ? DesignRewrite
     // ? ============================
     if (CONFIG.customStyle) {
@@ -78,6 +143,7 @@
                 --background: #fff7fe;
                 --background-alt: #ffdbfb;
                 --background-alt2: #ffb0f6;
+                --foreground: #000;
             }
             `;
         } else {
@@ -88,6 +154,7 @@
                     --background: #1d1b1d;
                     --background-alt: #362f35;
                     --background-alt2: #61465e;
+                    --foreground: #fff;
                 }
             `;
         }
@@ -95,7 +162,7 @@
         styleRewrite += `
             body{
                 background-color:var(--background);
-                background-image:none !important;    
+                background-image:none !important;
             }
 
             a.linkbutton,
@@ -107,7 +174,7 @@
             a.linkbutton:hover{
                 color:var(--primary);
             }
-            
+
             .faq h1{
                 color:var(--primary);
                 text-align:center;
@@ -162,7 +229,7 @@
                 border-bottom: 0;
                 border-radius:5px 5px 0 0;
             }
-            
+
             .faq > ul dd{
                 border-left: 1px dashed var(--primary);
                 border-top: 0;
@@ -170,8 +237,8 @@
                 border-bottom: 1px dashed var(--primary);
                 margin-left:0;
                 margin-bottom:0;
-            } 
-            
+            }
+
             .hometab{
                 width:10%;
                 padding: 5px 12px;
@@ -251,13 +318,17 @@
             }
 
             form.genericform input,
-            input[type="text"].stylized{
+            input[type="text"].stylized,
+            textarea.stylized,
+            input[type="button"],
+            button{
                 background-color: var(--background-alt2);
                 border: unset;
                 width: calc(100% - 15px);
                 border-radius: 5px;
                 padding: 5px;
             }
+                
 
             form.genericform small{
                 text-align: center;
@@ -272,7 +343,130 @@
                 color: #fff;
                 background-color:var(--primary);
             }
+
+            .notetinywarning{
+                background-color: var(--background-alt);
+                border-radius: 5px;
+                padding: 5px;
+                text-align: center;
+                margin: 0 auto;
+                background-image:unset;
+            }
+
+            #dropzoneUpload{
+                background-color: var(--background-alt);
+                border-radius: 5px;
+                text-align: center;
+                margin: 20px auto;
+                // width: 100%;
+                max-width: 500px;
+                border: 2px dashed var(--primary);
+            }
+
+            #dropzoneUpload:hover{
+                background-color: var(--background-alt2);
+            }
+
+            div.dz-default{
+                color: var(--secondary);
+            }
+
+            div.dz-preview{
+                background-image:unset;
+                background-color: var(--background-alt);
+                border-radius: 5px;
+                padding: 5px;
+                margin: 10px auto;
+            }
+
+            div.responseText{
+                background-color: var(--background-alt);
+                border-radius: 5px;
+                padding: 5px;
+                margin: 5px;
+                text-align: center;
+                border: 2px solid var(--primary);
+            }
+
+            .container{
+                background-color: var(--background-alt);
+                color: var(--primary);
+                border-radius: 5px;
+                padding: 5px;
+                margin: 5px auto;
+                text-align: center;
+                border: 2px dashed var(--primary);
+            }
+
+            .container .title,
+            .container .formatrow a{
+                color: var(--foreground);
+            }
+
+            .container hr{
+                border-top:unset;
+                border-bottom:1px solid var(--primary);
+            }
+
+            ul li.home{
+                border: 2px solid var(--primary);
+                border-radius: 5px;
+                padding: 5px;
+                margin: 5px;
+                text-align: center;
+                background-color: var(--background-alt);
+                background-image:unset;
+            }
+
+            .loginstatus{
+                display:none;
+            }
+
+            table{
+                background-image:unset;
+                background-color:var(--background-alt);
+                border:1px solid var(--primary);
+            }
+
+            table td{
+                border:1px solid var(--primary);
+            }
+
+            p.albumlink{
+                background-color:var(--background-alt);
+                border-radius:5px;
+                padding:5px;
+                margin:5px auto;
+                text-align:center;
+                border: 2px solid var(--primary);
+            }
+
+            form.urlUploadForm,
+            .urlUploadForm button.urlUpSubmit,
+            .urlUploadForm input[name="url"]{
+                width:unset;
+            }
+
+            .urlUploadForm button.urlUpSubmit,
+            .urlUploadForm input[name="url"]{
+                background-color:var(--background-alt2);
+                border: 2px solid var(--primary);
+            }
+            
         `;
+
+        if(location.pathname === "/"){
+            styleRewrite += `
+                body{
+                    margin:0;
+                    display:flex;
+                    flex-direction:column;
+                    align-items:center;
+                    justify-content:center;
+                    min-height:100dvh;
+                }
+            `;
+        }
 
         styleRewrite += `</style>`;
 
