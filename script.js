@@ -2,7 +2,7 @@
 // @name 			Better Catbox
 // @namespace 		https://github.com/anytngv2/better-catbox
 // @supportURL 		https://github.com/anytngv2/better-catbox
-// @version 		1.2.1-beta
+// @version 		1.3.1-beta
 // @description 	Improves the overall experience of the catbox site by adding some features and cleaning up the UI
 // @author 			AnytngV2
 // @match 			https://*.catbox.moe/*
@@ -23,6 +23,25 @@
 
     const CONFIG = {
         "customStyle": true, // if you disable this, you can found bugs
+        "customMainColor": false, // work only if customStyle is enabled
+        "customMainColors": {
+            "light": {
+                "primary": "#197dda",
+                "secondary": "#192cda",
+                "background": "#f3f4ff",
+                "background-alt": "#ccd0ff",
+                "background-alt2": "#b6bcff",
+                "foreground": "#000"
+            },
+            "dark": {
+                "primary": "#197dda",
+                "secondary": "#192cda",
+                "background": "#1f1f20",
+                "background-alt": "#1c1d29",
+                "background-alt2": "#1b1d2e",
+                "foreground": "#fff"
+            }
+        },
         "images": {
             "logo": {
                 "light": "https://files.catbox.moe/9hbd4n.png",
@@ -136,18 +155,44 @@
         let styleRewrite = `<style>`;
 
         if (lightMode) {
-            styleRewrite += `
-            :root{
-                --primary: #da19be;
-                --secondary: #ba25ff;
-                --background: #fff7fe;
-                --background-alt: #ffdbfb;
-                --background-alt2: #ffb0f6;
-                --foreground: #000;
+            if (CONFIG.customMainColor) {
+                styleRewrite += `
+                    :root{
+                        --primary: ${CONFIG.customMainColors.light.primary};
+                        --secondary: ${CONFIG.customMainColors.light.secondary};
+                        --background: ${CONFIG.customMainColors.light.background};
+                        --background-alt: ${CONFIG.customMainColors.light["background-alt"]};
+                        --background-alt2: ${CONFIG.customMainColors.light["background-alt2"]};
+                        --foreground: ${CONFIG.customMainColors.light.foreground};
+                    }
+                `;
+            } else {
+                styleRewrite += `
+                :root{
+                    --primary: #da19be;
+                    --secondary: #ba25ff;
+                    --background: #fff7fe;
+                    --background-alt: #ffdbfb;
+                    --background-alt2: #ffb0f6;
+                    --foreground: #000;
+                }
+                `;
             }
-            `;
+
         } else {
-            styleRewrite += `
+            if(CONFIG.customMainColor){
+                styleRewrite += `
+                    :root{
+                        --primary: ${CONFIG.customMainColors.dark.primary};
+                        --secondary: ${CONFIG.customMainColors.dark.secondary};
+                        --background: ${CONFIG.customMainColors.dark.background};
+                        --background-alt: ${CONFIG.customMainColors.dark["background-alt"]};
+                        --background-alt2: ${CONFIG.customMainColors.dark["background-alt2"]};
+                        --foreground: ${CONFIG.customMainColors.dark.foreground};
+                    }
+                `;
+            } else{
+                styleRewrite += `
                 :root{
                     --primary: #da19be;
                     --secondary: #ba25ff;
@@ -156,7 +201,8 @@
                     --background-alt2: #61465e;
                     --foreground: #fff;
                 }
-            `;
+                `;
+            }
         }
 
         styleRewrite += `
@@ -452,10 +498,14 @@
                 background-color:var(--background-alt2);
                 border: 2px solid var(--primary);
             }
+
+            .form.urlUploadForm{
+                background-color:unset;
+            }
             
         `;
 
-        if(location.pathname === "/"){
+        if (location.pathname === "/") {
             styleRewrite += `
                 body{
                     margin:0;
